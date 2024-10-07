@@ -13,13 +13,11 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Baixe e compile o xmlsec1 1.2.39
-RUN wget http://archive.ubuntu.com/ubuntu/pool/main/x/xmlsec1/xmlsec1_1.2.39.orig.tar.gz \
-    && tar -xvzf xmlsec1_1.2.39.orig.tar.gz \
-    && cd xmlsec1-1.2.39 \
-    && ./configure --prefix=/usr/local \
-    && make \
-    && make install
+# Verificar se o wget e o diretório de download estão funcionando corretamente
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/x/xmlsec1/xmlsec1_1.2.39.orig.tar.gz && ls -l && tar -xvzf xmlsec1_1.2.39.orig.tar.gz
+
+# Mude para o diretório do xmlsec1 e compile
+RUN cd xmlsec1-1.2.39 && ./configure --prefix=/usr/local && make && make install
 
 # Verifique a versão correta do xmlsec1
 RUN xmlsec1 --version
