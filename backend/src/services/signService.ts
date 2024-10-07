@@ -24,7 +24,8 @@ const generateUniqueFileName = (prefix: string): string => {
     return `${prefix}_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 };
 
-export const scheduleFileDeletion = (filePath: string, delayMinutes: number) => {
+export const scheduleFileDeletion = (filePath: string) => {
+    const delayMinutes = 15;
     const job = schedule.scheduleJob(new Date(Date.now() + delayMinutes * 60000), function() {
         fs.unlink(filePath, (err) => {
             if (err) {
