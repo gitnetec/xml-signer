@@ -22,8 +22,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "cross-env NODE_OPTIONS='--no-deprecation' nodemon"
+    "start": "node dist/index.js"
   }
 }
