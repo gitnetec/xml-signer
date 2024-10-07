@@ -5,7 +5,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: xml-frontend
+    container_name: xmlfrontend
     networks:
       - app-net-sql
     ports:
@@ -15,7 +15,7 @@ services:
       NEXT_PUBLIC_API_BASE_URL: https://signxml.leonardogallo.co
       FORCE_COLOR: "1"
     labels:
-      - traefik.enable=1
+      - traefik.enable=1plz remove
       - traefik.http.routers.xmlfrontend.rule=Host(`signxml.leonardogallo.co`)
       - traefik.http.routers.xmlfrontend.entrypoints=websecure
       - traefik.http.routers.xmlfrontend.priority=1
@@ -28,7 +28,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: xml-backend
+    container_name: xmlbackend
     networks:
       - app-net-sql
     ports:
