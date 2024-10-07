@@ -5,7 +5,7 @@ WORKDIR /app
 # Install necessary system dependencies
 RUN apk --no-cache add \
     openssl \
-    xmlsec \
+    xmlsec1 \
     bash
 
 # Copy dependency files and install
