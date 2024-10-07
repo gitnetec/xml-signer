@@ -4,7 +4,7 @@ import { signAndCompressXml, scheduleFileDeletion } from '../services/signServic
 import path from 'path';
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: 'dist/uploads/' });
 
 interface SignRequest extends Request {
     file?: Express.Multer.File;
