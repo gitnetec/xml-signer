@@ -97,11 +97,11 @@ export async function signAndCompressXml(xml: string, pfxPath: string, passphras
 
         return { base64GzipXml, signedXmlPath };
     } catch (error) {
-        // [privateKeyPath, certificatePath, caCertPath, signedXmlPath, xmlWithSignaturePlaceholders].forEach(file => {
-        //     if (fs.existsSync(file)) {
-        //         fs.unlinkSync(file);
-        //     }
-        // });
+        [privateKeyPath, certificatePath, caCertPath, signedXmlPath, xmlWithSignaturePlaceholders].forEach(file => {
+            if (fs.existsSync(file)) {
+                fs.unlinkSync(file);
+            }
+        });
         throw new Error(`Erro ao assinar e comprimir XML: ${(error as Error).message}`);
     }
 }

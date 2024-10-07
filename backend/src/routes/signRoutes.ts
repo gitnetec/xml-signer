@@ -69,8 +69,8 @@ router.get('/download', (req: Request, res: Response, next: NextFunction): void 
         res.status(400).send('Path parameter is required');
         return;
     }
-
-    const absolutePath = path.resolve(__dirname, '..', '..', filePath);
+ 
+    const absolutePath = path.resolve(filePath); 
 
     res.download(absolutePath, (err) => {
         if (err) {
@@ -79,5 +79,6 @@ router.get('/download', (req: Request, res: Response, next: NextFunction): void 
         }
     });
 });
+
 
 export default router;
