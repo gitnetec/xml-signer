@@ -11,10 +11,12 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libssl-dev \
     pkg-config \
+    libltdl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Verificar se o wget e o diretório de download estão funcionando corretamente
-RUN wget http://archive.ubuntu.com/ubuntu/pool/main/x/xmlsec1/xmlsec1_1.2.39.orig.tar.gz && ls -l && tar -xvzf xmlsec1_1.2.39.orig.tar.gz
+# Baixar e descompactar o xmlsec1 versão correta
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/x/xmlsec1/xmlsec1_1.2.39.orig.tar.gz \
+    && tar -xvzf xmlsec1_1.2.39.orig.tar.gz
 
 # Mude para o diretório do xmlsec1 e compile
 RUN cd xmlsec1-1.2.39 && ./configure --prefix=/usr/local && make && make install
