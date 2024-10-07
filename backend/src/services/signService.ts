@@ -24,23 +24,29 @@ const generateUniqueFileName = (prefix: string): string => {
     return `${prefix}_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 };
 
-export const scheduleFileDeletion = (filePath: string) => {
-    const job = schedule.scheduleJob(new Date(Date.now() + 15 * 60 * 1000), () => {
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-            console.log(`Arquivo temporário excluído: ${filePath}`);
-        }
+export const scheduleFileDeletion = (filePath: string, delayMinutes: number) => {
+    const job = schedule.scheduleJob(new Date(Date.now() + delayMinutes * 60000), function() {
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(`Erro ao excluir o arquivo ${filePath}:`, err);
+            } else {
+                console.log(`Arquivo excluído com sucesso: ${filePath}`);
+            }
+        });
     });
-    
-    console.log(`Agendada exclusão do arquivo: ${filePath} para daqui a 15 minutos`);
-    
+
+    console.log(`Agendada exclusão do arquivo: ${filePath} para daqui a ${delayMinutes} minutos`);
+
+    const jobInfo = {
+        nextInvocation: job.nextInvocation(),
+        pendingInvocations: job.pendingInvocations.map(inv => inv.fireDate),
+        canceled: job.cancel(true)
+    };
+
     console.log('Informações detalhadas do job:', 
-        JSON.stringify(job, (key, value) => {
+        JSON.stringify(jobInfo, (key, value) => {
             if (value instanceof Date) {
                 return value.toISOString();
-            }
-            if (typeof value === 'function') {
-                return value.toString();
             }
             return value;
         }, 2)
