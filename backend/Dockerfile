@@ -1,16 +1,16 @@
-FROM ubuntu:24.04
+FROM node:18.20.4-slim
 
 WORKDIR /app
 
-# Install Node.js (use the version from WSL if needed)
+# Install necessary system dependencies and download xmlsec1 deb package
 RUN apt-get update && apt-get install -y \
     curl \
     openssl \
-    xmlsec1=1.2.39-5build2 \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs
+    wget && \
+    wget http://archive.ubuntu.com/ubuntu/pool/universe/x/xmlsec1/xmlsec1_1.2.39-5build2_amd64.deb && \
+    dpkg -i xmlsec1_1.2.39-5build2_amd64.deb
 
-# Verify Node.js and xmlsec1 installation
+# Verify xmlsec1 and Node.js versions
 RUN node -v && npm -v && xmlsec1 --version
 
 # Copy dependency files and install
