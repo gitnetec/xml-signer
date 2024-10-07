@@ -6,7 +6,7 @@ import signRoutes from './routes/signRoutes';
 const app = express();
 
 app.use(cors({
-  origin: 'https://xml.leonardogallo.co',
+  origin: ['https://xml.leonardogallo.co', 'http://localhost:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'], 
 }));

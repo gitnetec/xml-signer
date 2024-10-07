@@ -26,7 +26,7 @@ const generateUniqueFileName = (prefix: string): string => {
 
 export const scheduleFileDeletion = (filePath: string) => {
     const delayMinutes = 15;
-    const job = schedule.scheduleJob(new Date(Date.now() + delayMinutes * 60000), function() {
+    const job = schedule.scheduleJob(new Date(Date.now() + delayMinutes * 60000), function () {
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error(`Erro ao excluir o arquivo ${filePath}:`, err);
@@ -43,23 +43,15 @@ export const scheduleFileDeletion = (filePath: string) => {
         pendingInvocations: job.pendingInvocations.map(inv => inv.fireDate),
         canceled: job.cancel(true)
     };
-
-    console.log('Informações detalhadas do job:', 
-        JSON.stringify(jobInfo, (key, value) => {
-            if (value instanceof Date) {
-                return value.toISOString();
-            }
-            return value;
-        }, 2)
-    );
 };
 
 export async function signAndCompressXml(xml: string, pfxPath: string, passphrase: string): Promise<{ base64GzipXml: string; signedXmlPath: string }> {
-    const outputDir = path.join(__dirname, '..', '..', 'output');
-    
+    const outputDir = path.resolve(__dirname, '..', '..', 'output');
+
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
+
 
     const uniqueId = generateUniqueFileName('sign');
     const privateKeyPath = path.join(outputDir, `private_key_${uniqueId}.pem`);
@@ -67,11 +59,20 @@ export async function signAndCompressXml(xml: string, pfxPath: string, passphras
     const caCertPath = path.join(outputDir, `ca_cert_${uniqueId}.pem`);
     const signedXmlPath = path.join(outputDir, `signed_file_${uniqueId}.xml`);
     const xmlWithSignaturePlaceholders = path.join(outputDir, `xml_with_signature_${uniqueId}.xml`);
-   
+
     const xmlWithPlaceholders = addSignaturePlaceholders(xml);
     fs.writeFileSync(xmlWithSignaturePlaceholders, xmlWithPlaceholders, { encoding: 'utf8' });
 
     const passphraseOption = passphrase ? `-passin pass:${passphrase}` : '';
+
+    console.log(`Caminho da chave privada: ${privateKeyPath}`);
+    console.log(`Caminho do certificado: ${certificatePath}`);
+    console.log(`Caminho do XML assinado: ${signedXmlPath}`);
+    console.log(`Caminho do arquivo XML com placeholders: ${xmlWithSignaturePlaceholders}`);
+    console.log('Verificação de existência de arquivos:');
+    console.log('Private Key Exists:', fs.existsSync(privateKeyPath));
+    console.log('Certificate Exists:', fs.existsSync(certificatePath));
+    console.log('XML with Placeholders Exists:', fs.existsSync(xmlWithSignaturePlaceholders));
 
     try {
 
@@ -98,10 +99,10 @@ export async function signAndCompressXml(xml: string, pfxPath: string, passphras
         fs.unlinkSync(privateKeyPath);
         fs.unlinkSync(certificatePath);
         fs.unlinkSync(caCertPath);
-        fs.unlinkSync(xmlWithSignaturePlaceholders);        
+        fs.unlinkSync(xmlWithSignaturePlaceholders);
 
         return { base64GzipXml, signedXmlPath };
-    } catch (error) {        
+    } catch (error) {
         // [privateKeyPath, certificatePath, caCertPath, signedXmlPath, xmlWithSignaturePlaceholders].forEach(file => {
         //     if (fs.existsSync(file)) {
         //         fs.unlinkSync(file);
@@ -130,14 +131,14 @@ function addSignaturePlaceholders(xml: string): string {
     const x509Data = doc.createElementNS('http://www.w3.org/2000/09/xmldsig#', 'ds:X509Data');
     const x509Certificate = doc.createElementNS('http://www.w3.org/2000/09/xmldsig#', 'ds:X509Certificate');
 
-    
+
     canonicalizationMethod.setAttribute('Algorithm', 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315');
     signatureMethod.setAttribute('Algorithm', 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256');
     reference.setAttribute('URI', '');
     transform1.setAttribute('Algorithm', 'http://www.w3.org/2000/09/xmldsig#enveloped-signature');
     transform2.setAttribute('Algorithm', 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315');
     digestMethod.setAttribute('Algorithm', 'http://www.w3.org/2001/04/xmlenc#sha256');
-    
+
     digestValue.textContent = '';
     signatureValue.textContent = '';
     x509Certificate.textContent = '';
