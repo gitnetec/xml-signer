@@ -80,7 +80,7 @@ export async function signAndCompressXml(xml: string, pfxPath: string, passphras
             signCommand += ` --trusted-pem ${caCertPath}`;
         }
 
-        signCommand += ` --output ${signedXmlPath} ${xmlWithSignaturePlaceholders}`;
+        signCommand += `--verbose --output ${signedXmlPath} ${xmlWithSignaturePlaceholders}`;
 
         await runCommand(signCommand);
 
