@@ -1,11 +1,11 @@
-FROM node:18-alpine as base
+FROM node:18-bullseye as base
 
 WORKDIR /app
 
 # Install necessary system dependencies
-RUN apk --no-cache add \
+RUN apt-get update && apt-get install -y \
     openssl \
-    xmlsec \
+    xmlsec1=1.2.39-1 \
     bash
 
 # Copy dependency files and install
