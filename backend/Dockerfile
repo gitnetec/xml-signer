@@ -1,6 +1,6 @@
 FROM node:18-alpine as base
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Install necessary system dependencies
 RUN apk --no-cache add \
@@ -19,12 +19,12 @@ COPY . .
 RUN yarn build
 
 # Verify content after build
-RUN echo "Content of /usr/src/app after build:" && \
-    ls -la /usr/src/app && \
-    echo "Content of /usr/src/app/dist:" && \
-    ls -la /usr/src/app/dist
+RUN echo "Content of /app after build:" && \
+    ls -la /app && \
+    echo "Content of /app/dist:" && \
+    ls -la /app/dist
 
 EXPOSE 3771
 
 # Use node to run the built application
-CMD ["node", "dist/index.js"]
+CMD ["yarn", "start"]
