@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { signXml, getDownloadUrl } from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
-import { FaFileDownload } from 'react-icons/fa';
+import { FaFileDownload, FaCopy } from 'react-icons/fa';
 
 export default function Home() {
   const [pfxFile, setPfxFile] = useState<File | null>(null);
@@ -152,29 +152,28 @@ export default function Home() {
             <div className="mt-4 space-y-4">
               <div>
                 <Label className="text-white">Base64 Gzip XML:</Label>
-                <div className="flex space-x-2">
+                <div className="relative">
                   <Input
                     value={signResult.base64GzipXml}
                     readOnly
-                    className="bg-white/5 backdrop-filter backdrop-blur-sm border border-white/10 text-white"
+                    className="bg-white/5 backdrop-filter backdrop-blur-sm border border-white/10 text-white pr-10"
                   />
-                  <Button
+                  <button
                     onClick={handleCopyBase64}
-                    className="bg-yellow-500 text-white"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-yellow-500 hover:text-yellow-400"
+                    title="Copy Base64"
                   >
-                    Copy Base64
-                  </Button>
+                    <FaCopy />
+                  </button>
                 </div>
               </div>
-              <div>
-                <Button
-                  onClick={handleDownloadXml}
-                  className="bg-green-500 text-white flex items-center space-x-2"
-                >
-                  <FaFileDownload /> {/* Ícone de XML */}
-                  <span>Download Signed XML</span>
-                </Button>
-              </div>
+              <Button
+                onClick={handleDownloadXml}
+                className="bg-green-500 hover:bg-green-600 text-white w-full flex items-center justify-center space-x-2"
+              >
+                <FaFileDownload />
+                <span>Download Signed XML</span>
+              </Button>
             </div>
           )}
         </CardContent>
