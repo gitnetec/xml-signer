@@ -1,12 +1,11 @@
-FROM node:18-bullseye as base
+FROM node:18 as base
 
 WORKDIR /app
 
 # Install necessary system dependencies
 RUN apt-get update && apt-get install -y \
     openssl \
-    xmlsec1=1.2.39-1 \
-    bash
+    xmlsec1=1.2.39-5build2
 
 # Copy dependency files and install
 COPY package.json yarn.lock ./
