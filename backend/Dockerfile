@@ -1,11 +1,17 @@
-FROM node:18 as base
+FROM ubuntu:24.04
 
 WORKDIR /app
 
-# Install necessary system dependencies
+# Install Node.js (use the version from WSL if needed)
 RUN apt-get update && apt-get install -y \
+    curl \
     openssl \
-    xmlsec1=1.2.39-5build2
+    xmlsec1=1.2.39-5build2 \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Verify Node.js and xmlsec1 installation
+RUN node -v && npm -v && xmlsec1 --version
 
 # Copy dependency files and install
 COPY package.json yarn.lock ./
