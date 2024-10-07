@@ -18,8 +18,11 @@ RUN apt-get update && apt-get install -y \
 RUN wget http://archive.ubuntu.com/ubuntu/pool/main/x/xmlsec1/xmlsec1_1.2.39.orig.tar.gz \
     && tar -xvzf xmlsec1_1.2.39.orig.tar.gz
 
-# Mude para o diretório do xmlsec1 e compile
+# Mude para o diretório do xmlsec1, compile e instale
 RUN cd xmlsec1-1.2.39 && ./configure --prefix=/usr/local && make && make install
+
+# Atualize o LD_LIBRARY_PATH para incluir as bibliotecas instaladas
+ENV LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 
 # Verifique a versão correta do xmlsec1
 RUN xmlsec1 --version
