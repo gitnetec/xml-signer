@@ -36,8 +36,8 @@ services:
       NODE_ENV: production
       FORCE_COLOR: "1"
     volumes:
-      - ./backend/output:/usr/src/app/output
-      - ./backend/uploads:/usr/src/app/uploads
+      - ./backend/output:/app/dist/output
+      - ./backend/uploads:/app/dist/uploads
     labels:
       - traefik.enable=1
       - traefik.http.routers.xmlbackend.rule=Host(`signxml.leonardogallo.co`) && (PathPrefix(`/sign`) || PathPrefix(`/sign/download`) || PathPrefix(`/output`))
