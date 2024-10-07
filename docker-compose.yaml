@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  xml-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: xml-frontend
+    ports:
+      - "3772:3772"
+    environment:
+      NODE_ENV: production
+    labels:
+      - traefik.enable=1
+      - traefik.http.routers.xml-frontend.rule=Host(`signxml.leonardogallo.co`)
+      - traefik.http.routers.xml-frontend.entrypoints=websecure
+      - traefik.http.routers.xml-frontend.tls.certresolver=letsencryptresolver
+      - traefik.http.services.xml-frontend.loadbalancer.server.port=3772
+
+  xml-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: xml-backend
+    ports:
+      - "3771:3771"
+    environment:
+      NODE_ENV: production
+    volumes:
+      - ./backend/output:/usr/src/app/output
+      - ./backend/uploads:/usr/src/app/uploads
+    labels:
+      - traefik.enable=1
+      - traefik.http.routers.xml-backend.rule=Host(`signxml.leonardogallo.co`) && (PathPrefix(`/sign`) || PathPrefix(`/sign/download`))
+      - traefik.http.routers.xml-backend.entrypoints=websecure
+      - traefik.http.routers.xml-backend.tls.certresolver=letsencryptresolver
+      - traefik.http.services.xml-backend.loadbalancer.server.port=3771
+
+networks:
+  app-net-sql:
+    name: app-net-sql
+    external: true
+
+volumes:
+  backend-output:
+  backend-uploads:
