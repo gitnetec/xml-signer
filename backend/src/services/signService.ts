@@ -37,12 +37,6 @@ export const scheduleFileDeletion = (filePath: string) => {
     });
 
     console.log(`Agendada exclusão do arquivo: ${filePath} para daqui a ${delayMinutes} minutos`);
-
-    const jobInfo = {
-        nextInvocation: job.nextInvocation(),
-        pendingInvocations: job.pendingInvocations.map(inv => inv.fireDate),
-        canceled: job.cancel(true)
-    };
 };
 
 export async function signAndCompressXml(xml: string, pfxPath: string, passphrase: string): Promise<{ base64GzipXml: string; signedXmlPath: string }> {
