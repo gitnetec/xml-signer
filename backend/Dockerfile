@@ -2,34 +2,40 @@ FROM node:18.20.4-slim
 
 WORKDIR /app
 
-# Install necessary system dependencies and download xmlsec1 deb package
+# Instale dependências de compilação
 RUN apt-get update && apt-get install -y \
     curl \
     openssl \
-    wget && \
-    wget http://archive.ubuntu.com/ubuntu/pool/universe/x/xmlsec1/xmlsec1_1.2.39-5build2_amd64.deb && \
-    dpkg -i xmlsec1_1.2.39-5build2_amd64.deb
+    build-essential \
+    wget \
+    libxml2-dev \
+    libssl-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
-# Verify xmlsec1 and Node.js versions
-RUN node -v && npm -v && xmlsec1 --version
+# Baixe e compile o xmlsec1 1.2.39
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/x/xmlsec1/xmlsec1_1.2.39.orig.tar.gz \
+    && tar -xvzf xmlsec1_1.2.39.orig.tar.gz \
+    && cd xmlsec1-1.2.39 \
+    && ./configure --prefix=/usr/local \
+    && make \
+    && make install
 
-# Copy dependency files and install
+# Verifique a versão correta do xmlsec1
+RUN xmlsec1 --version
+
+# Copie os arquivos de dependências e instale
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-# Copy source files
+# Copie o restante dos arquivos da aplicação e faça a build
 COPY . .
-
-# Build the application
 RUN yarn build
 
-# Verify content after build
-RUN echo "Content of /app after build:" && \
-    ls -la /app && \
-    echo "Content of /app/dist:" && \
-    ls -la /app/dist
+# Verifique os arquivos após a build
+RUN ls -la /app && ls -la /app/dist
 
 EXPOSE 3771
 
-# Use node to run the built application
+# Comando para rodar a aplicação
 CMD ["yarn", "start"]
