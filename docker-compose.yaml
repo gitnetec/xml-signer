@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   xml-frontend:
@@ -10,12 +10,15 @@ services:
       - "3772:3772"
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_API_BASE_URL: https://signxml.leonardogallo.co
+      FORCE_COLOR: "1"
     labels:
       - traefik.enable=1
       - traefik.http.routers.xml-frontend.rule=Host(`signxml.leonardogallo.co`)
       - traefik.http.routers.xml-frontend.entrypoints=websecure
       - traefik.http.routers.xml-frontend.tls.certresolver=letsencryptresolver
       - traefik.http.services.xml-frontend.loadbalancer.server.port=3772
+    tty: true
 
   xml-backend:
     build:
@@ -26,6 +29,7 @@ services:
       - "3771:3771"
     environment:
       NODE_ENV: production
+      FORCE_COLOR: "1"
     volumes:
       - ./backend/output:/usr/src/app/output
       - ./backend/uploads:/usr/src/app/uploads
@@ -35,6 +39,7 @@ services:
       - traefik.http.routers.xml-backend.entrypoints=websecure
       - traefik.http.routers.xml-backend.tls.certresolver=letsencryptresolver
       - traefik.http.services.xml-backend.loadbalancer.server.port=3771
+    tty: true
 
 networks:
   app-net-sql:
