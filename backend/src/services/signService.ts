@@ -59,17 +59,7 @@ export async function signAndCompressXml(xml: string, pfxPath: string, passphras
 
     const passphraseOption = passphrase ? `-passin pass:${passphrase}` : '';
 
-    console.log(`Caminho da chave privada: ${privateKeyPath}`);
-    console.log(`Caminho do certificado: ${certificatePath}`);
-    console.log(`Caminho do XML assinado: ${signedXmlPath}`);
-    console.log(`Caminho do arquivo XML com placeholders: ${xmlWithSignaturePlaceholders}`);
-    console.log('Verificação de existência de arquivos:');
-    console.log('Private Key Exists:', fs.existsSync(privateKeyPath));
-    console.log('Certificate Exists:', fs.existsSync(certificatePath));
-    console.log('XML with Placeholders Exists:', fs.existsSync(xmlWithSignaturePlaceholders));
-
     try {
-
         await runCommand(`openssl pkcs12 -in ${pfxPath} -nocerts -nodes -out ${privateKeyPath} ${passphraseOption}`);
         await runCommand(`openssl pkcs12 -in ${pfxPath} -clcerts -nokeys -out ${certificatePath} ${passphraseOption}`);
         await runCommand(`openssl pkcs12 -in ${pfxPath} -cacerts -nokeys -out ${caCertPath} ${passphraseOption}`);
@@ -94,6 +84,7 @@ export async function signAndCompressXml(xml: string, pfxPath: string, passphras
         fs.unlinkSync(certificatePath);
         fs.unlinkSync(caCertPath);
         fs.unlinkSync(xmlWithSignaturePlaceholders);
+        fs.unlinkSync(pfxPath);
 
         return { base64GzipXml, signedXmlPath };
     } catch (error) {
@@ -160,5 +151,12 @@ function addSignaturePlaceholders(xml: string): string {
     }
 
     const serializer = new XMLSerializer();
-    return serializer.serializeToString(doc);
+    let serializedXml = serializer.serializeToString(doc);
+
+    // Adiciona a declaração XML com codificação UTF-8 se não existir
+    if (!serializedXml.startsWith('<?xml')) {
+        serializedXml = '<?xml version="1.0" encoding="UTF-8"?>\n' + serializedXml;
+    }
+
+    return serializedXml;
 }

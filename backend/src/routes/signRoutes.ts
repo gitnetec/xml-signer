@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
-import { signAndCompressXml, scheduleFileDeletion } from '../services/signService';
+import { signAndCompressXml } from '../services/signService';
 import path from 'path';
 
 const router = express.Router();
@@ -15,11 +15,6 @@ interface SignRequest extends Request {
 }
 
 router.post('/', upload.single('pfx'), async (req: SignRequest, res: Response): Promise<void> => {
-    console.log('Requisição recebida em /sign');
-    console.log('Headers:', req.headers);
-    console.log('Body:', req.body);
-    console.log('File:', req.file);
-
     try {
         const { passphrase, xml } = req.body;
 
@@ -42,7 +37,6 @@ router.post('/', upload.single('pfx'), async (req: SignRequest, res: Response): 
         }
 
         const pfxFilePath = req.file.path;   
-        scheduleFileDeletion(pfxFilePath);
 
         console.log('Iniciando processo de assinatura e compressão');
         console.log('PFX File Path:', pfxFilePath);
